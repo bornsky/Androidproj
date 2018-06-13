@@ -1,5 +1,6 @@
 package com.example.court.projectandroid;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -10,16 +11,22 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -28,14 +35,48 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button btn =  (Button) findViewById(R.id.pressBtn);
+        Button btn = findViewById(R.id.pressBtn);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                
+
             }
         });
 
+        public static String converse (String host,int port, String path)throw IOException {
+
+            URL url = new URL("http", host, port, path);
+            URLConnection connection = null;
+            try {
+                connection = url.openConnection();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            //This does a GET
+            connection.setDoInput(true);
+            //To do a POST
+//            connection.setDoOutput(true);
+            connection.setAllowUserInteraction(true);
+
+            StringBuilder stringBuilder = new StringBuilder();
+
+            BufferedReader in = null;
+            try {
+                in = new BufferedReader(
+                        new InputStreamReader(connection.getInputStream()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            String line;
+
+            while ((line = in.readline()) != null) {
+                stringBuilder.append(line);
+            }
+
+            in.close();
+            return stringBuilder.toString();
+        }
     }
 
     @Override
